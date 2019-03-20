@@ -26,6 +26,13 @@
 @end
 
 @implementation YJSideMenu
+- (instancetype)init{
+    self = [super init];
+    if (self) {
+        [self commonInit];
+    }
+    return self;
+}
 - (void)commonInit{
     _menuViewContainer = [[UIView alloc] init];
     _contentViewContainer = [[UIView alloc] init];
@@ -39,9 +46,9 @@
 }
 
 #pragma mark - Public
-- (id)initWithContentViewController:(UIViewController *)contentViewController leftMenuViewController:(UIViewController *)leftMenuViewController{
-    if (self = [super init]) {
-        [self commonInit];
+- (instancetype)initWithContentViewController:(UIViewController *)contentViewController leftMenuViewController:(UIViewController *)leftMenuViewController{
+    self = [self init];
+    if (self) {
         _contentViewController = contentViewController;
         _leftMenuViewController = leftMenuViewController;
     }

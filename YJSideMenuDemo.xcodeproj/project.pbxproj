@@ -86,9 +86,9 @@
 		BAF5043A2240D905009575D7 /* YJSideMenu */ = {
 			isa = PBXGroup;
 			children = (
+				BAF5043D2240D905009575D7 /* UIViewController+YJSideMenu.h */,
 				BAF5043B2240D905009575D7 /* UIViewController+YJSideMenu.m */,
 				BAF5043C2240D905009575D7 /* YJSideMenu.h */,
-				BAF5043D2240D905009575D7 /* UIViewController+YJSideMenu.h */,
 				BAF5043E2240D905009575D7 /* YJSideMenu.m */,
 			);
 			path = YJSideMenu;
