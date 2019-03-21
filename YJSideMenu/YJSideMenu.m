@@ -200,7 +200,7 @@
         }
     }
     
-    return YES;
+    return NO;
 }
 - (void)panGestureRecognized:(UIPanGestureRecognizer *)recognizer{
     if ([self.delegate conformsToProtocol:@protocol(YJSideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didRecognizePanGesture:)])
