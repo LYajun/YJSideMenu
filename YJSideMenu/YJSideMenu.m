@@ -88,6 +88,7 @@
         [self.delegate sideMenu:self willHideMenuViewController:self.leftMenuViewController];
     }
     [self.leftMenuViewController beginAppearanceTransition:NO animated:animated];
+    self.contentMaskView.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
     [self.contentMaskView removeFromSuperview];
     self.visible = NO;
     self.leftMenuVisible = NO;
@@ -140,6 +141,8 @@
         
         self.contentViewContainer.center = CGPointMake((UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]) ? self.contentViewInLandscapeOffsetCenterX + CGRectGetWidth(self.view.frame) : self.contentViewInPortraitOffsetCenterX + CGRectGetWidth(self.view.frame)), self.contentViewContainer.center.y);
 
+        self.contentMaskView.backgroundColor = [UIColor colorWithWhite:0 alpha:self.contentMaskViewAlphaRate];
+        
         self.menuViewContainer.transform = CGAffineTransformIdentity;
         
     } completion:^(BOOL finished) {
@@ -252,19 +255,6 @@
         if (point.x > offsetX) {
             point.x = offsetX;
         }
-        CGFloat contentMaskViewAlpha = 0;
-        if (self.visible) {
-            contentMaskViewAlpha = self.contentMaskViewAlphaRate - fabs(point.x / offsetX)  * self.contentMaskViewAlphaRate;
-        }else{
-            contentMaskViewAlpha = point.x / offsetX  * self.contentMaskViewAlphaRate;
-        }
-        if (contentMaskViewAlpha > self.contentMaskViewAlphaRate) {
-            contentMaskViewAlpha = self.contentMaskViewAlphaRate;
-        }
-        
-        self.contentMaskView.backgroundColor = [UIColor colorWithWhite:0 alpha:contentMaskViewAlpha];
-        
-        
         
         self.contentViewContainer.transform = CGAffineTransformMakeScale(1, 1);
         
