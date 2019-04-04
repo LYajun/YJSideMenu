@@ -10,7 +10,7 @@
 1、集成:
 
 ```
-pod 'YJSearchController'
+pod 'YJSideMenu'
 ```
 
 2、使用
