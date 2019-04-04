@@ -26,6 +26,7 @@
 @end
 
 @implementation YJSideMenu
+#pragma mark - View life cycle
 - (instancetype)init{
     self = [super init];
     if (self) {
@@ -45,6 +46,42 @@
     _contentViewInPortraitOffsetWidth = 80.f;
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    [self.view addSubview:self.menuViewContainer];
+    [self.view addSubview:self.contentViewContainer];
+    
+    self.menuViewContainer.frame = self.view.bounds;
+    self.menuViewContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    [self addChildViewController:self.leftMenuViewController];
+    self.leftMenuViewController.view.frame = self.view.bounds;
+    self.leftMenuViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.menuViewContainer addSubview:self.leftMenuViewController.view];
+    [self.leftMenuViewController didMoveToParentViewController:self];
+    
+    self.contentViewContainer.frame = self.view.bounds;
+    self.contentViewContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self addChildViewController:self.contentViewController];
+    self.contentViewController.view.frame = self.view.bounds;
+    [self.contentViewContainer addSubview:self.contentViewController.view];
+    [self.contentViewController didMoveToParentViewController:self];
+    
+    
+    
+    
+    if (self.panGestureEnabled) {
+        self.view.multipleTouchEnabled = NO;
+        UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
+        panGestureRecognizer.delegate = self;
+        [self.view addGestureRecognizer:panGestureRecognizer];
+    }
+    
+    _contentViewInLandscapeOffsetCenterX = CGRectGetWidth(self.view.frame)/2 - _contentViewInLandscapeOffsetWidth;
+    _contentViewInPortraitOffsetCenterX  = CGRectGetWidth(self.view.frame)/2 - _contentViewInPortraitOffsetWidth;
+}
 #pragma mark - Public
 - (instancetype)initWithContentViewController:(UIViewController *)contentViewController leftMenuViewController:(UIViewController *)leftMenuViewController{
     self = [self init];
@@ -73,7 +110,9 @@
 - (void)addContentMaskView{
     if (self.contentMaskView.superview)
         return;
+    self.contentMaskView.autoresizingMask = UIViewAutoresizingNone;
     self.contentMaskView.frame = self.contentViewContainer.bounds;
+    self.contentMaskView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.contentViewContainer addSubview:self.contentMaskView];
 }
 - (void)statusBarNeedsAppearanceUpdate{
@@ -157,38 +196,7 @@
     
     [self statusBarNeedsAppearanceUpdate];
 }
-#pragma mark - View life cycle
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    [self.view addSubview:self.menuViewContainer];
-    [self.view addSubview:self.contentViewContainer];
-    
-    self.menuViewContainer.frame = self.view.bounds;
-    [self addChildViewController:self.leftMenuViewController];
-    self.leftMenuViewController.view.frame = self.view.bounds;
-    [self.menuViewContainer addSubview:self.leftMenuViewController.view];
-    [self.leftMenuViewController didMoveToParentViewController:self];
-    
-    self.contentViewContainer.frame = self.view.bounds;
-    [self addChildViewController:self.contentViewController];
-    self.contentViewController.view.frame = self.view.bounds;
-    [self.contentViewContainer addSubview:self.contentViewController.view];
-    [self.contentViewController didMoveToParentViewController:self];
-    
-    
-    
-    
-    if (self.panGestureEnabled) {
-        self.view.multipleTouchEnabled = NO;
-        UIPanGestureRecognizer *panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognized:)];
-        panGestureRecognizer.delegate = self;
-        [self.view addGestureRecognizer:panGestureRecognizer];
-    }
-    
-    _contentViewInLandscapeOffsetCenterX = CGRectGetWidth(self.view.frame)/2 - _contentViewInLandscapeOffsetWidth;
-    _contentViewInPortraitOffsetCenterX  = CGRectGetWidth(self.view.frame)/2 - _contentViewInPortraitOffsetWidth;
-}
+
 
 #pragma mark - UIGestureRecognizer Delegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
@@ -296,7 +304,25 @@
 #pragma mark - View Controller Rotation handler
 
 - (BOOL)shouldAutorotate{
-    return NO;
+    return self.contentViewController.shouldAutorotate;
+}
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
+    if (self.visible) {
+        self.menuViewContainer.bounds = self.view.bounds;
+        self.contentViewContainer.transform = CGAffineTransformIdentity;
+        self.contentViewContainer.frame = self.view.bounds;
+        
+        self.contentViewContainer.transform = CGAffineTransformIdentity;
+        
+        CGPoint center;
+        if (self.leftMenuVisible) {
+            center = CGPointMake((UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) ? self.contentViewInLandscapeOffsetCenterX + CGRectGetHeight(self.view.frame) : self.contentViewInPortraitOffsetCenterX + CGRectGetWidth(self.view.frame)), self.contentViewContainer.center.y);
+        } else {
+            center = CGPointMake((UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation) ? -self.contentViewInLandscapeOffsetCenterX : -self.contentViewInPortraitOffsetCenterX), self.contentViewContainer.center.y);
+        }
+        
+        self.contentViewContainer.center = center;
+    }
 }
 #pragma mark - Status Bar Appearance Management
 
