@@ -3,7 +3,7 @@
 
 
 <div align="left">
-<img src="https://github.com/LYajun/YJSideMenu/blob/master/Assets/Shot1.png" width ="375" height ="812" >
+<img src="https://github.com/LYajun/YJSideMenu/blob/master/Assets/Shot.png" width ="185.5" height ="406" >
 
 ## 使用方式
 
